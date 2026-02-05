@@ -9,25 +9,26 @@ from ml_predictor import predict_voice
 app = FastAPI()
 class VoiceRequest(BaseModel):
     audio_url: str
-API_KEY = "my_secret_key_123"
+API_KEY = os.getenv("API_KEY", "my_secret_key_123")
+
 @app.get("/")
 def home():
     return {"message": "API chal rahi hai"}
-
 @app.post("/check-voice")
 def check_voice(data: VoiceRequest, authorization: str = Header(None)):
 
     # API KEY CHECK
-if not authorization:
-    raise HTTPException(status_code=401, detail="Authorization header missing")
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header missing")
 
-if not authorization.startswith("Bearer "):
-    raise HTTPException(status_code=401, detail="Invalid token format")
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid token format")
 
-token = authorization.split(" ")[1]
+    token = authorization.split(" ")[1]
 
-if token != API_KEY:
-    raise HTTPException(status_code=401, detail="Invalid API key")
+    if token != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
 
     # AUDIO DOWNLOAD
     try:
