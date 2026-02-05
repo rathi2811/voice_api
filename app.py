@@ -12,17 +12,20 @@ app = FastAPI()
 API_KEY = os.getenv("API_KEY", "my_secret_key_123")
 
 
+from pydantic import BaseModel, Field
+
 class VoiceRequest(BaseModel):
     language: str
-    audio_format: str
-    audio_base64: str
+    audio_format: str = Field(..., alias="audioFormat")
+    audio_base64: str = Field(..., alias="audioBase64")
 
-
+    class Config:
+        populate_by_name = True
 @app.post("/check-voice")
-def check_voice(
-    req: VoiceRequest,
-    x_api_key: str = Header(None)
-):
+def check_voice(req: VoiceRequest, x_api_key: str = Header(None)):
+    ...
+
+
     # ---- API KEY CHECK ----
     if x_api_key != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API key")
@@ -39,7 +42,7 @@ def check_voice(
         f.write(audio_bytes)
 
     # ---- PREDICT ----
-    result = predict_voice(temp_path)
+
 
     # ---- FINAL RESPONSE ----
     return {
