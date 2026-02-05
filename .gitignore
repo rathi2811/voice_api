@@ -1,7 +1,9 @@
 venv/
 __pycache__/
 *.pyc
-*.pkl
+# *.pkl
+
+
 *.so
 *.db
 *.sqlite3
